@@ -9,8 +9,8 @@ A modern desktop downloader built with Electron, React, and yt-dlp. Download vid
 
 - [📥 Installation](#-installation)
 - [🚀 Features](#-features)
-- [📦 What's Bundled](#-whats-bundled)
-- [✅ No Manual Setup Required](#-no-manual-setup-required)
+- [📦 What's Included](#-whats-included)
+- [✅ Minimal Setup Required](#-minimal-setup-required)
 - [🌐 Supported Platforms](#-supported-platforms)
 - [🛠️ Development](#-development)
 - [🔧 Configuration](#-configuration)
@@ -26,14 +26,15 @@ A modern desktop downloader built with Electron, React, and yt-dlp. Download vid
 ### Platform-Specific Setup
 
 #### Windows
-1. Download `NeonFetch-0.0.1-portable.exe` from the `release` folder
+1. Download the Windows build from [GitHub Releases](https://github.com/zepro2004/yt-dlp-gui/releases/latest)
 2. Double-click the executable to launch
-3. **No additional setup required** - all dependencies are bundled
+3. If running from source/building locally, download binaries: `./update-binaries.ps1`
 
 #### Linux (AppImage)
-1. Download `NeonFetch-0.0.1.AppImage` from the `release` folder
+1. Download the AppImage from [GitHub Releases](https://github.com/zepro2004/yt-dlp-gui/releases/latest)
 2. Make it executable: `chmod +x NeonFetch-0.0.1.AppImage`
-3. **Install required system libraries:**
+3. If running from source/building locally, download binaries: `./update-binaries.sh`
+4. **Install required system libraries:**
    ```bash
    # Arch Linux
    sudo pacman -S at-spi2-core gtk3 fuse2
@@ -44,12 +45,12 @@ A modern desktop downloader built with Electron, React, and yt-dlp. Download vid
    # Fedora
    sudo dnf install at-spi2-core gtk3 fuse
    ```
-4. Run: `./NeonFetch-0.0.1.AppImage`
+5. Run: `./NeonFetch-0.0.1.AppImage`
 
 #### macOS
-1. Download `NeonFetch-0.0.1.dmg` from the `release` folder
+1. Download the macOS build from [GitHub Releases](https://github.com/zepro2004/yt-dlp-gui/releases/latest)
 2. Open the DMG and drag to Applications
-3. **No additional setup required** - all dependencies are bundled
+3. If running from source/building locally, download binaries: `./update-binaries.sh`
 
 ### Running the App
 
@@ -59,7 +60,7 @@ A modern desktop downloader built with Electron, React, and yt-dlp. Download vid
 4. Videos are saved to your default download location
 
 The app will automatically:
-- Detect and use the bundled yt-dlp
+- Detect and use the downloaded yt-dlp
 - Configure ffmpeg for video/audio processing
 - Use your existing yt-dlp config file if present (optional)
 
@@ -67,17 +68,17 @@ The app will automatically:
 
 - **Modern UI** - Clean, responsive interface built with React 19
 - **Fully Portable** - No installation required, runs standalone
-- **All Dependencies Bundled** - Includes yt-dlp, ffmpeg, and all necessary tools
+- **Easy Binary Setup** - Download yt-dlp/ffmpeg with one script per platform
 - **Real-time Progress** - Live download progress and status updates
-- **Zero Configuration** - Works out of the box, no manual setup needed
+- **Zero Configuration** - Works out of the box after one-time binary download
 
-## 📦 What's Bundled
+## 📦 What's Included
 
-The portable executable includes everything you need:
+The app includes everything except the media tools, which are downloaded via scripts:
 
-- **yt-dlp** - The powerful video downloader
-- **ffmpeg** - Video/audio processing and conversion
-- **ffprobe** - Media file analysis
+- **yt-dlp** - Downloaded via `update-binaries.*`
+- **ffmpeg** - Downloaded via `update-binaries.*`
+- **ffprobe** - Downloaded via `update-binaries.*`
 - **Electron Runtime** - Complete Chromium-based app environment
 - **React UI** - All frontend assets and dependencies
 
@@ -86,19 +87,9 @@ The portable executable includes everything you need:
 - Linux: ~300 MB (AppImage)
 - macOS: ~250 MB (DMG)
 
-## ✅ No Manual Setup Required
+## ✅ Minimal Setup Required
 
-**Windows:** 100% ready to run with:
-- ✅ All binaries included and pre-configured
-- ✅ No Python installation needed
-- ✅ No yt-dlp configuration needed
-- ✅ No ffmpeg installation needed
-- ✅ No PATH environment variable setup needed
-- ✅ Works on any Windows PC without admin rights
-
-**Linux:** Requires system libraries only (see setup instructions above)
-
-**macOS:** 100% ready to run (all dependencies bundled)
+Run the binary download script once. After that, the app works normally.
 
 ## 🌐 Supported Platforms
 
@@ -141,6 +132,13 @@ This starts:
 - Electron app with DevTools open
 - Hot module replacement for instant updates
 
+**Important:** Before running or building on any platform, download/update binaries:
+```bash
+./update-binaries.sh
+```
+
+This ensures platform-specific binaries (yt-dlp, ffmpeg, ffprobe) are included.
+
 ### Building
 
 ```bash
@@ -156,13 +154,6 @@ npm run dist:all     # All platforms
 
 The built executables will be generated in the `release` folder.
 
-**Important:** Before building for Linux/macOS, update the binaries:
-```bash
-./update-binaries.sh
-```
-
-This ensures platform-specific binaries (yt-dlp, ffmpeg, ffprobe) are included.
-
 ### Project Structure
 
 ```
@@ -174,7 +165,7 @@ yt-dlp-gui/
 ├── electron/              # Electron main process
 │   ├── main.ts            # Main process & IPC handlers
 │   └── preload.ts         # Preload script for context bridge
-├── resources/bin/         # Bundled binaries (yt-dlp, ffmpeg, etc.)
+├── resources/bin/         # Downloaded binaries (yt-dlp, ffmpeg, etc.)
 ├── public/                # Static assets (logo, etc.)
 ├── dist/                  # Vite build output
 ├── electron-dist/         # Compiled Electron code
@@ -183,9 +174,9 @@ yt-dlp-gui/
 
 ## 🔧 Configuration
 
-### Updating Bundled Binaries
+### Downloading/Updating Binaries
 
-To update yt-dlp and ffmpeg to their latest versions:
+You must download the binaries once before first run. To update later:
 
 **Windows:**
 ```powershell

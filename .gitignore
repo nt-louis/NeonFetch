@@ -15,6 +15,12 @@ release
 temp-downloads
 *.local
 
+# Downloaded binaries
+resources/bin/ffmpeg
+resources/bin/ffprobe
+resources/bin/yt-dlp
+resources/bin/*.exe
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
