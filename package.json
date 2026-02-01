@@ -11,7 +11,7 @@
     "build": "vite build",
     "cargo:build": "cargo build --manifest-path src-tauri/Cargo.toml",
     "dist:win": "tauri build --bundles msi",
-    "dist:linux": "tauri build --bundles appimage",
+    "dist:linux": "makepkg -sf",
     "dist:mac": "tauri build --bundles dmg",
     "lint": "eslint .",
     "preview": "vite preview"

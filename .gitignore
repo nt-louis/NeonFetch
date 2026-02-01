@@ -18,6 +18,11 @@ temp-downloads
 src-tauri/target
 src-tauri/WixTools
 
+# Arch package build artifacts
+*.pkg.tar.zst
+pkg/
+src/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

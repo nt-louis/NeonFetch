@@ -19,9 +19,11 @@ Download from [GitHub Releases](https://github.com/zepro2004/yt-dlp-gui/releases
 pip install yt-dlp
 
 # Install ffmpeg
+# Arch Linux: sudo pacman -S ffmpeg
+# Debian/Ubuntu: sudo apt install ffmpeg
+# Fedora: sudo dnf install ffmpeg
 # Windows: choco install ffmpeg
 # macOS: brew install ffmpeg
-# Linux: sudo apt install ffmpeg  (or pacman/dnf)
 ```
 
 ### Usage
@@ -55,12 +57,36 @@ npm install
 ### Commands
 
 ```bash
-npm run dev              # Dev server with hot reload
-npm run build            # Build frontend
-npm run dist:win         # Build Windows MSI
-npm run dist:linux       # Build Linux AppImage
-npm run dist:mac         # Build macOS DMG
-npm run lint             # Lint code
+npm run dev         # Dev server with hot reload
+npm run build       # Build frontend
+npm run dist:win    # Build Windows MSI
+npm run dist:linux  # Build all Linux packages (Arch, Debian, RPM)
+npm run dist:mac    # Build macOS DMG
+npm run lint        # Lint code
+```
+
+### Linux Build Notes
+
+Build all Linux packages at once:
+```bash
+npm run dist:linux          # Creates .pkg.tar.zst (Arch), .deb (Debian), and .rpm (Fedora)
+```
+
+Install the appropriate package for your distribution:
+
+**Arch Linux:**
+```bash
+sudo pacman -U neonfetch-0.0.3-1-x86_64.pkg.tar.zst
+```
+
+**Debian/Ubuntu:**
+```bash
+sudo dpkg -i src-tauri/target/release/bundle/deb/neonfetch_*.deb
+```
+
+**Fedora/RHEL:**
+```bash
+sudo rpm -i src-tauri/target/release/bundle/rpm/neonfetch-*.rpm
 ```
 
 ### Project Structure
@@ -92,10 +118,16 @@ Sample configs are in `ytdlp-config/` directory.
 **Windows: Build fails with MSVC error**
 - Install [Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/) with C++ workload
 
-**Linux: AppImage won't run**
+**Linux: Installation**
 ```bash
-chmod +x NeonFetch-*.AppImage
-sudo apt install libfuse2  # Or fuse2 on Arch
+# Arch Linux
+sudo pacman -U neonfetch-0.0.3-1-x86_64.pkg.tar.zst
+
+# Debian/Ubuntu
+sudo dpkg -i neonfetch_0.0.3_amd64.deb
+
+# Fedora/RHEL
+sudo rpm -i neonfetch-0.0.3-1.x86_64.rpm
 ```
 
 ## License
