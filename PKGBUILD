@@ -24,7 +24,7 @@ package() {
     cd "$startdir"
     
     # Install binary from Tauri's build output
-    install -Dm755 "src-tauri/target/release/app" "$pkgdir/usr/bin/neonfetch"
+    install -Dm755 "src-tauri/target/release/neonfetch" "$pkgdir/usr/bin/neonfetch"
     
     # Install desktop file
     install -Dm644 /dev/stdin "$pkgdir/usr/share/applications/neonfetch.desktop" <<EOF

@@ -1,5 +1,5 @@
 [package]
-name = "app"
+name = "neonfetch"
 version = "0.0.3"
 description = "A Tauri App"
 authors = ["you"]
