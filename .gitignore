@@ -10,10 +10,13 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
-electron-dist
 release
 temp-downloads
 *.local
+
+# Tauri build outputs
+src-tauri/target
+src-tauri/WixTools
 
 # Downloaded binaries
 resources/bin/ffmpeg

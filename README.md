@@ -1,6 +1,6 @@
 # NeonFetch
 
-A modern desktop downloader built with Electron, React, and yt-dlp. Download videos from YouTube and other supported platforms with a beautiful, easy-to-use interface.
+A modern desktop downloader built with Tauri, React, and yt-dlp. Download videos from YouTube and other supported platforms with a beautiful, easy-to-use interface.
 
 ![Version](https://img.shields.io/badge/version-0.0.1-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
@@ -16,6 +16,7 @@ A modern desktop downloader built with Electron, React, and yt-dlp. Download vid
 - [🔧 Configuration](#-configuration)
 - [🔒 Security](#-security)
 - [📝 Scripts](#-scripts)
+- [🔧 Troubleshooting](#-troubleshooting)
 - [🤝 Contributing](#-contributing)
 - [📄 License](#-license)
 - [🙏 Acknowledgments](#-acknowledgments)
@@ -67,10 +68,13 @@ The app will automatically:
 ## 🚀 Features
 
 - **Modern UI** - Clean, responsive interface built with React 19
-- **Fully Portable** - No installation required, runs standalone
+- **Lightning Fast** - Tauri's Rust backend provides instant startup and low memory usage
+- **Tiny Footprint** - ~10-15 MB installers (vs 200-300 MB with Electron)
+- **Fully Portable** - Installers available for Windows, Linux, and macOS
 - **Easy Binary Setup** - Download yt-dlp/ffmpeg with one script per platform
-- **Real-time Progress** - Live download progress and status updates
-- **Zero Configuration** - Works out of the box after one-time binary download
+- **Real-time Progress** - Live download progress and status updates streamed from Rust backend
+- **Secure by Design** - Rust's memory safety + Tauri's security model
+- **Native Performance** - Uses system WebView instead of bundled Chromium
 
 ## 📦 What's Included
 
@@ -79,13 +83,13 @@ The app includes everything except the media tools, which are downloaded via scr
 - **yt-dlp** - Downloaded via `update-binaries.*`
 - **ffmpeg** - Downloaded via `update-binaries.*`
 - **ffprobe** - Downloaded via `update-binaries.*`
-- **Electron Runtime** - Complete Chromium-based app environment
+- **Tauri Runtime** - Lightweight Rust-based app runtime
 - **React UI** - All frontend assets and dependencies
 
 **Package sizes:**
-- Windows: ~220 MB (portable executable)
-- Linux: ~300 MB (AppImage)
-- macOS: ~250 MB (DMG)
+- Windows: ~10-15 MB (installer/portable)
+- Linux: ~15-20 MB (AppImage)
+- macOS: ~10-15 MB (DMG)
 
 ## ✅ Minimal Setup Required
 
@@ -106,8 +110,57 @@ Thanks to yt-dlp, NeonFetch supports downloads from:
 
 ### Prerequisites
 
+#### Required for All Platforms:
 - Node.js 18+ 
 - npm 9+
+- **Rust 1.77.2+** (Install from [rustup.rs](https://rustup.rs/))
+  ```bash
+  # Install Rust
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+  
+  # Verify installation
+  rustc --version
+  cargo --version
+  ```
+
+#### Platform-Specific System Dependencies:
+
+**Windows:**
+- Microsoft C++ Build Tools (from Visual Studio Installer)
+- WebView2 (usually pre-installed on Windows 10/11)
+
+**Linux (Ubuntu/Debian):**
+```bash
+sudo apt update
+sudo apt install libwebkit2gtk-4.1-dev \
+  build-essential \
+  curl \
+  wget \
+  file \
+  libxdo-dev \
+  libssl-dev \
+  libayatana-appindicator3-dev \
+  librsvg2-dev
+```
+
+**Linux (Arch):**
+```bash
+sudo pacman -Syu
+sudo pacman -S webkit2gtk-4.1 base-devel curl wget file openssl appmenu-gtk-module gtk3 libappindicator-gtk3 librsvg libvips
+```
+
+**Linux (Fedora):**
+```bash
+sudo dnf check-update
+sudo dnf install webkit2gtk4.1-devel openssl-devel curl wget file libappindicator-gtk3-devel librsvg2-devel
+sudo dnf group install "C Development Tools and Libraries"
+```
+
+**macOS:**
+- Xcode Command Line Tools:
+  ```bash
+  xcode-select --install
+  ```
 
 ### Installation
 
@@ -116,9 +169,14 @@ Thanks to yt-dlp, NeonFetch supports downloads from:
 git clone <repository-url>
 cd yt-dlp-gui
 
-# Install dependencies
+# Install Node.js dependencies
 npm install
+
+# First build will compile Rust dependencies (may take a few minutes)
+# This happens automatically when you run npm run dev or npm run build
 ```
+
+**Note:** The first time you run the app, Rust will compile all dependencies. This can take 2-5 minutes but subsequent builds will be much faster due to caching.
 
 ### Development Mode
 
@@ -129,30 +187,53 @@ npm run dev
 
 This starts:
 - Vite dev server on `http://localhost:5173`
-- Electron app with DevTools open
+- Tauri app with DevTools available
 - Hot module replacement for instant updates
 
-**Important:** Before running or building on any platform, download/update binaries:
+**Important:** Before building production installers, download/update binaries:
+
+**Windows:**
+```powershell
+.\update-binaries.ps1
+```
+
+**Linux/macOS:**
 ```bash
+chmod +x update-binaries.sh
 ./update-binaries.sh
 ```
 
-This ensures platform-specific binaries (yt-dlp, ffmpeg, ffprobe) are included.
+This downloads yt-dlp, ffmpeg, and ffprobe to `resources/bin/`. These binaries are bundled into your app as configured in `tauri.conf.json` under `bundle.resources`.
+
+**Note:** For development (`npm run dev`), the app will attempt to use system-installed binaries if the `resources/bin/` folder is empty.
 
 ### Building
 
 ```bash
-# Build for production
+# Build frontend only (creates dist/ folder)
 npm run build
 
-# Create platform-specific builds
-npm run dist:win     # Windows portable executable
-npm run dist:linux   # Linux AppImage
-npm run dist:mac     # macOS DMG
-npm run dist:all     # All platforms
+# Build complete Tauri app with installers
+npm run dist:win     # Windows: MSI installer
+npm run dist:linux   # Linux: AppImage
+npm run dist:mac     # macOS: DMG
+npm run dist:all     # Builds all available bundles for current platform
 ```
 
-The built executables will be generated in the `release` folder.
+**Build Process:**
+1. `npm run build` - Vite compiles React app to `dist/`
+2. Tauri builds Rust backend and bundles everything together
+3. MSI installer is created in `src-tauri/target/release/bundle/msi/`
+
+**Build Output Locations:**
+- Windows (MSI): `src-tauri/target/release/bundle/msi/`
+- Linux (AppImage): `src-tauri/target/release/bundle/appimage/`
+- macOS (DMG): `src-tauri/target/release/bundle/dmg/`
+
+**Build Times:**
+- First build: 5-10 minutes (compiles all Rust dependencies)
+- Subsequent builds: 1-2 minutes (only recompiles changed code)
+- Frontend-only rebuilds: ~5 seconds
 
 ### Project Structure
 
@@ -162,13 +243,15 @@ yt-dlp-gui/
 │   ├── App.tsx            # Main app component
 │   ├── App.css            # Styles
 │   └── main.tsx           # React entry point
-├── electron/              # Electron main process
-│   ├── main.ts            # Main process & IPC handlers
-│   └── preload.ts         # Preload script for context bridge
+├── src-tauri/             # Tauri Rust backend
+│   ├── src/
+│   │   ├── main.rs        # Rust entry point
+│   │   └── lib.rs         # Tauri commands & IPC handlers
+│   ├── Cargo.toml         # Rust dependencies
+│   └── tauri.conf.json    # Tauri configuration
 ├── resources/bin/         # Downloaded binaries (yt-dlp, ffmpeg, etc.)
 ├── public/                # Static assets (logo, etc.)
 ├── dist/                  # Vite build output
-├── electron-dist/         # Compiled Electron code
 └── release/               # Built executables
 ```
 
@@ -192,11 +275,11 @@ chmod +x update-binaries.sh
 The script will:
 - Download the latest yt-dlp from GitHub releases
 - Download the latest ffmpeg and ffprobe static builds
-- Place them in `resources/bin/` for bundling
+- Place them in `resources/bin/` for bundling via Tauri
 - Show current and new version numbers
 - Automatically backup and restore on failure
 
-**Note:** The `resources/bin/` folder contains both Windows (`.exe`) and Linux/macOS binaries. The correct ones are automatically selected during the build process.
+**Note:** The `resources/bin/` folder contains both Windows (`.exe`) and Linux/macOS binaries. Tauri's build process automatically includes only platform-specific binaries in each installer.
 
 After updating, rebuild the app for your target platform:
 ```bash
@@ -204,6 +287,19 @@ npm run dist:win     # For Windows
 npm run dist:linux   # For Linux
 npm run dist:mac     # For macOS
 ```
+
+### Tauri Configuration
+
+The app's Tauri settings are in [`src-tauri/tauri.conf.json`](src-tauri/tauri.conf.json):
+- **Window settings** - Size (900x650), title, resizability
+- **Bundle resources** - Includes `resources/bin/*` for yt-dlp, ffmpeg, ffprobe
+- **Build targets** - MSI/NSIS for Windows, AppImage for Linux, DMG for macOS
+- **App identifier** - `com.neonfetch.app`
+
+Rust dependencies are managed in [`src-tauri/Cargo.toml`](src-tauri/Cargo.toml):
+- `tauri` - Core framework (v2.9.5)
+- `tauri-plugin-shell` - For spawning yt-dlp process
+- `tauri-plugin-log` - Development logging
 
 ### yt-dlp Config (Optional)
 
@@ -221,24 +317,78 @@ If no config exists, NeonFetch uses sensible defaults.
 
 ## 🔒 Security
 
-- **Context Isolation** - Enabled for security
-- **Node Integration** - Disabled in renderer
-- **Content Security Policy** - Enforced
-- **Process Separation** - Main and renderer processes isolated
-- **No Shell Execution** - Commands run directly, not through shell
+- **Rust Backend** - Memory-safe, secure backend with no JavaScript vulnerabilities
+- **IPC Isolation** - Frontend and backend communicate only through explicit commands
+- **Content Security Policy** - Enforced by default
+- **No Node.js Access** - Frontend has no direct system access
+- **Command Allowlisting** - Only approved Tauri commands can be invoked
 
 ## 📝 Scripts
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start development server with hot reload |
+| `npm run dev` | Start Tauri development server with hot reload |
 | `npm run build` | Build production assets (Vite + TypeScript) |
-| `npm run dist:win` | Build portable Windows executable |
+| `npm run dist:win` | Build Windows MSI installer |
 | `npm run dist:linux` | Build Linux AppImage |
 | `npm run dist:mac` | Build macOS DMG |
 | `npm run dist:all` | Build for all platforms |
-| `npm run electron:prod` | Run production build locally |
+| `npm run tauri` | Run Tauri CLI commands |
 | `npm run lint` | Run ESLint on codebase |
+
+## 🔧 Troubleshooting
+
+### Build Issues
+
+**"Rust compiler not found"**
+```bash
+# Install Rust from https://rustup.rs/
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source $HOME/.cargo/env  # Or restart your terminal
+```
+
+**Linux: "Package webkit2gtk-4.1 not found"**
+```bash
+# Ubuntu/Debian
+sudo apt install libwebkit2gtk-4.1-dev
+
+# Arch
+sudo pacman -S webkit2gtk-4.1
+
+# Fedora
+sudo dnf install webkit2gtk4.1-devel
+```
+
+**Windows: "MSVC not found" or linking errors**
+- Install [Visual Studio Build Tools](https://visualstudio.microsoft.com/downloads/#build-tools-for-visual-studio-2022)
+- Select "Desktop development with C++" workload
+
+**First build is very slow**
+- This is normal! Rust compiles all dependencies from source
+- First build: 5-10 minutes
+- Subsequent builds: 1-2 minutes (thanks to caching)
+
+### Runtime Issues
+
+**"yt-dlp not found"**
+- Run `./update-binaries.ps1` (Windows) or `./update-binaries.sh` (Linux/macOS)
+- Rebuild the app: `npm run dist:win` (or appropriate platform)
+
+**macOS: "App is damaged and can't be opened"**
+```bash
+# Remove quarantine attribute
+xattr -cr /Applications/NeonFetch.app
+```
+
+**Linux: AppImage won't run**
+```bash
+# Make executable
+chmod +x NeonFetch-*.AppImage
+
+# Install FUSE if needed
+sudo apt install libfuse2  # Ubuntu/Debian
+sudo pacman -S fuse2       # Arch
+```
 
 ## 🤝 Contributing
 
@@ -256,7 +406,7 @@ This project is licensed under the MIT License.
 
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp) - The powerful video downloader
 - [FFmpeg](https://ffmpeg.org/) - Multimedia framework
-- [Electron](https://www.electronjs.org/) - Cross-platform desktop apps
+- [Tauri](https://tauri.app/) - Lightweight, secure desktop apps with Rust
 - [React](https://react.dev/) - UI library
 - [Vite](https://vitejs.dev/) - Next generation frontend tooling
 

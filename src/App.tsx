@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
 import "./App.css";
 
 type YtdlpEvent = { type: "log" | "error" | "done"; data: string };
@@ -13,13 +15,16 @@ export default function App() {
 
   useEffect(() => {
     // Subscribe to log/progress events from the main process.
-    const unsubscribe = window.ytdlp.onEvent((evt: YtdlpEvent) => {
+    const unlisten = listen<YtdlpEvent>("ytdlp:event", (event) => {
+      const evt = event.payload;
       setLog((prev) => prev + evt.data);
       if (evt.type === "done" || evt.type === "error") {
         setRunning(false);
       }
     });
-    return unsubscribe;
+    return () => {
+      unlisten.then((fn) => fn());
+    };
   }, []);
 
   useEffect(() => {
@@ -39,7 +44,7 @@ export default function App() {
     setRunning(true);
 
     try {
-      await window.ytdlp.start(u);
+      await invoke("ytdlp_start", { url: u, ytdlpPath: undefined });
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : String(e);
       setLog((prev) => prev + `\n${message}\n`);

@@ -1,34 +1,35 @@
 {
   "name": "neonfetch",
-  "description": "NeonFetch is a modern desktop downloader built with Electron, React, and yt-dlp.",
+  "description": "NeonFetch is a modern desktop downloader built with Tauri, React, and yt-dlp.",
   "author": "NeonFetch Contributors",
   "private": true,
   "version": "0.0.1",
+  "type": "module",
   "scripts": {
-    "dev": "concurrently -k \"vite\" \"wait-on http://localhost:5173 && npm run electron:dev\"",
-    "electron:dev": "tsc -p electron && electron .",
-    "build": "vite build && tsc -p electron",
-    "dist:win": "npm run build && electron-builder --win portable",
-    "dist:linux": "npm run build && electron-builder --linux AppImage",
-    "dist:mac": "npm run build && electron-builder --mac",
-    "dist:all": "npm run build && electron-builder -mwl",
-    "electron:prod": "npm run build && electron .",
+    "dev": "tauri dev",
+    "vite:dev": "vite",
+    "build": "vite build",
+    "cargo:build": "cargo build --manifest-path src-tauri/Cargo.toml",
+    "dist:win": "tauri build --bundles msi",
+    "dist:linux": "tauri build --bundles appimage",
+    "dist:mac": "tauri build --bundles dmg",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tauri-apps/api": "^2.9.1",
+    "@tauri-apps/plugin-shell": "^2.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@tauri-apps/cli": "^2.9.6",
     "@types/node": "^24.10.9",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
     "concurrently": "^9.2.1",
-    "electron": "^40.1.0",
-    "electron-builder": "^26.0.15",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
@@ -36,56 +37,6 @@
     "terser": "^5.46.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
-    "vite": "^7.2.4",
-    "wait-on": "^9.0.3"
-  },
-  "main": "electron-dist/main.js",
-  "build": {
-    "appId": "com.neonfetch.app",
-    "productName": "NeonFetch",
-    "asar": true,
-    "files": [
-      "dist/**",
-      "electron-dist/**",
-      "public/**",
-      "package.json"
-    ],
-    "extraResources": [
-      {
-        "from": "resources/bin",
-        "to": "bin",
-        "filter": [
-          "**/*"
-        ]
-      }
-    ],
-    "directories": {
-      "output": "release"
-    },
-    "win": {
-      "target": [
-        "portable"
-      ],
-      "artifactName": "${productName}-${version}-portable.${ext}",
-      "icon": "public/logo.ico"
-    },
-    "linux": {
-      "target": [
-        {
-          "target": "AppImage",
-          "arch": ["x64"]
-        }
-      ],
-      "artifactName": "${productName}-${version}.${ext}",
-      "icon": "public/logo.svg",
-      "category": "Utility",
-      "executableArgs": ["--no-sandbox"]
-    },
-    "mac": {
-      "target": [
-        "dmg"
-      ],
-      "icon": "public/logo.svg"
-    }
+    "vite": "^7.2.4"
   }
 }
