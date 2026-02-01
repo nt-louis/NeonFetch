@@ -18,12 +18,6 @@ temp-downloads
 src-tauri/target
 src-tauri/WixTools
 
-# Downloaded binaries
-resources/bin/ffmpeg
-resources/bin/ffprobe
-resources/bin/yt-dlp
-resources/bin/*.exe
-
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

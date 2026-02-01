@@ -33,7 +33,6 @@
       "icons/icon.icns",
       "../public/logo.ico"
     ],
-    "resources": ["../resources/bin/*"],
     "linux": {
       "appimage": {
         "files": {}
@@ -43,7 +42,6 @@
       "allowDowngrades": true,
       "wix": {
         "language": "en-US"
-
       }
     }
   }
