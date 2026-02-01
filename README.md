@@ -89,6 +89,11 @@ sudo dpkg -i src-tauri/target/release/bundle/deb/neonfetch_*.deb
 sudo rpm -i src-tauri/target/release/bundle/rpm/neonfetch-*.rpm
 ```
 
+After installation, launch with:
+```bash
+neonfetch
+```
+
 ### Linux Runtime Requirements
 
 NeonFetch requires **yt-dlp** and **ffmpeg** on all Linux distros. Arch users get these via package dependencies. For Debian/Ubuntu and Fedora/RHEL, install them manually:
