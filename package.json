@@ -71,11 +71,15 @@
     },
     "linux": {
       "target": [
-        "AppImage"
+        {
+          "target": "AppImage",
+          "arch": ["x64"]
+        }
       ],
       "artifactName": "${productName}-${version}.${ext}",
       "icon": "public/logo.svg",
-      "category": "Utility"
+      "category": "Utility",
+      "executableArgs": ["--no-sandbox"]
     },
     "mac": {
       "target": [

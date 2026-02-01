@@ -5,6 +5,64 @@ A modern desktop downloader built with Electron, React, and yt-dlp. Download vid
 ![Version](https://img.shields.io/badge/version-0.0.1-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
+## 📚 Table of Contents
+
+- [📥 Installation](#-installation)
+- [🚀 Features](#-features)
+- [📦 What's Bundled](#-whats-bundled)
+- [✅ No Manual Setup Required](#-no-manual-setup-required)
+- [🌐 Supported Platforms](#-supported-platforms)
+- [🛠️ Development](#-development)
+- [🔧 Configuration](#-configuration)
+- [🔒 Security](#-security)
+- [📝 Scripts](#-scripts)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+- [🙏 Acknowledgments](#-acknowledgments)
+- [📞 Support](#-support)
+
+## 📥 Installation
+
+### Platform-Specific Setup
+
+#### Windows
+1. Download `NeonFetch-0.0.1-portable.exe` from the `release` folder
+2. Double-click the executable to launch
+3. **No additional setup required** - all dependencies are bundled
+
+#### Linux (AppImage)
+1. Download `NeonFetch-0.0.1.AppImage` from the `release` folder
+2. Make it executable: `chmod +x NeonFetch-0.0.1.AppImage`
+3. **Install required system libraries:**
+   ```bash
+   # Arch Linux
+   sudo pacman -S at-spi2-core gtk3 fuse2
+   
+   # Ubuntu/Debian
+   sudo apt install libatk1.0-0 libgtk-3-0 libfuse2
+   
+   # Fedora
+   sudo dnf install at-spi2-core gtk3 fuse
+   ```
+4. Run: `./NeonFetch-0.0.1.AppImage`
+
+#### macOS
+1. Download `NeonFetch-0.0.1.dmg` from the `release` folder
+2. Open the DMG and drag to Applications
+3. **No additional setup required** - all dependencies are bundled
+
+### Running the App
+
+1. Launch NeonFetch using the method above for your platform
+2. Paste any supported video URL
+3. Click **Download** and watch the progress
+4. Videos are saved to your default download location
+
+The app will automatically:
+- Detect and use the bundled yt-dlp
+- Configure ffmpeg for video/audio processing
+- Use your existing yt-dlp config file if present (optional)
+
 ## 🚀 Features
 
 - **Modern UI** - Clean, responsive interface built with React 19
@@ -19,17 +77,18 @@ The portable executable includes everything you need:
 
 - **yt-dlp** - The powerful video downloader
 - **ffmpeg** - Video/audio processing and conversion
-- **ffplay** - Media player capabilities
 - **ffprobe** - Media file analysis
 - **Electron Runtime** - Complete Chromium-based app environment
 - **React UI** - All frontend assets and dependencies
 
-**Total package size:** ~220 MB (portable)
+**Package sizes:**
+- Windows: ~220 MB (portable executable)
+- Linux: ~300 MB (AppImage)
+- macOS: ~250 MB (DMG)
 
 ## ✅ No Manual Setup Required
 
-The portable version is **100% ready to run** with:
-
+**Windows:** 100% ready to run with:
 - ✅ All binaries included and pre-configured
 - ✅ No Python installation needed
 - ✅ No yt-dlp configuration needed
@@ -37,24 +96,11 @@ The portable version is **100% ready to run** with:
 - ✅ No PATH environment variable setup needed
 - ✅ Works on any Windows PC without admin rights
 
-Simply download and double-click `NeonFetch-0.0.1-portable.exe` to start!
+**Linux:** Requires system libraries only (see setup instructions above)
 
-## 🎯 Usage
+**macOS:** 100% ready to run (all dependencies bundled)
 
-### Running the Portable Version
-
-1. Download `NeonFetch-0.0.1-portable.exe` from the `release` folder
-2. Double-click the executable to launch
-3. Paste any supported video URL
-4. Click **Download** and watch the progress
-5. Videos are saved to your default download location
-
-The app will automatically:
-- Detect and use the bundled yt-dlp
-- Configure ffmpeg for video/audio processing
-- Use your existing yt-dlp config file if present (optional)
-
-### Supported Platforms
+## 🌐 Supported Platforms
 
 Thanks to yt-dlp, NeonFetch supports downloads from:
 - YouTube (videos, playlists, live streams)
@@ -101,11 +147,21 @@ This starts:
 # Build for production
 npm run build
 
-# Create portable Windows executable
-npm run dist:win
+# Create platform-specific builds
+npm run dist:win     # Windows portable executable
+npm run dist:linux   # Linux AppImage
+npm run dist:mac     # macOS DMG
+npm run dist:all     # All platforms
 ```
 
-The portable executable will be generated in the `release` folder.
+The built executables will be generated in the `release` folder.
+
+**Important:** Before building for Linux/macOS, update the binaries:
+```bash
+./update-binaries.sh
+```
+
+This ensures platform-specific binaries (yt-dlp, ffmpeg, ffprobe) are included.
 
 ### Project Structure
 
@@ -144,34 +200,31 @@ chmod +x update-binaries.sh
 
 The script will:
 - Download the latest yt-dlp from GitHub releases
-- Download the latest ffmpeg, ffplay, and ffprobe
+- Download the latest ffmpeg and ffprobe static builds
 - Place them in `resources/bin/` for bundling
 - Show current and new version numbers
 - Automatically backup and restore on failure
 
-After updating, rebuild the app:
+**Note:** The `resources/bin/` folder contains both Windows (`.exe`) and Linux/macOS binaries. The correct ones are automatically selected during the build process.
+
+After updating, rebuild the app for your target platform:
 ```bash
-npm run dist:win
+npm run dist:win     # For Windows
+npm run dist:linux   # For Linux
+npm run dist:mac     # For macOS
 ```
 
 ### yt-dlp Config (Optional)
 
-NeonFetch respects your existing yt-dlp configuration. Place a `yt-dlp.conf` file in:
+NeonFetch respects your existing yt-dlp configuration. Place a config file in:
 - Windows: `%APPDATA%\yt-dlp\config.txt`
 - Linux/Mac: `~/.config/yt-dlp/config`
 
-Example config:
-```
-# Default output location
--o ~/Downloads/%(title)s.%(ext)s
+Sample configs are included in the repository:
+- [ytdlp-config/config.txt](ytdlp-config/config.txt) (Windows)
+- [ytdlp-config/config-linux.txt](ytdlp-config/config-linux.txt) (Linux)
 
-# Preferred format
--f bestvideo+bestaudio
-
-# Embed metadata
---embed-metadata
---embed-thumbnail
-```
+Copy the one you want to the correct location above and rename it to `config` (Linux/Mac) or `config.txt` (Windows).
 
 If no config exists, NeonFetch uses sensible defaults.
 
@@ -190,6 +243,9 @@ If no config exists, NeonFetch uses sensible defaults.
 | `npm run dev` | Start development server with hot reload |
 | `npm run build` | Build production assets (Vite + TypeScript) |
 | `npm run dist:win` | Build portable Windows executable |
+| `npm run dist:linux` | Build Linux AppImage |
+| `npm run dist:mac` | Build macOS DMG |
+| `npm run dist:all` | Build for all platforms |
 | `npm run electron:prod` | Run production build locally |
 | `npm run lint` | Run ESLint on codebase |
 
@@ -216,7 +272,3 @@ This project is licensed under the MIT License.
 ## 📞 Support
 
 For issues, questions, or contributions, please open an issue on GitHub.
-
----
-
-**Made with ❤️ using Electron + React + yt-dlp**

@@ -1,0 +1,27 @@
+# Prefer high-quality WebM codecs first (VP9 / AV1), fallback to best
+-f "bv*[vcodec^=vp9]+ba[acodec^=opus]/bv*[vcodec^=av1]+ba[acodec^=opus]/bv*+ba/b"
+
+# Let yt-dlp pick the correct container (webm for vp9/av1)
+--merge-output-format mkv
+
+# Metadata & thumbnails
+--add-metadata
+--embed-thumbnail
+
+# Safer filenames
+--restrict-filenames
+
+# Resume downloads
+-c
+
+# Don’t overwrite
+--no-overwrites
+
+# Progress output
+--progress
+
+# Output path
+-o C:/Users/dev01/Videos/YouTube/%(channel,uploader)s/%(title)s.%(ext)s
+
+# Cookies
+--cookies-from-browser firefox
