@@ -16,6 +16,8 @@ permissions:
 jobs:
   build-msi:
     runs-on: windows-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - name: Resolve tag
