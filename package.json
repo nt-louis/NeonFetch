@@ -3,7 +3,7 @@
   "description": "NeonFetch is a modern desktop downloader built with Tauri, React, and yt-dlp.",
   "author": "NeonFetch Contributors",
   "private": true,
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
   "scripts": {
     "dev": "tauri dev",

@@ -1,6 +1,6 @@
 # Maintainer: NeonFetch Contributors
 pkgname=neonfetch
-pkgver=0.0.3
+pkgver=0.0.4
 pkgrel=1
 pkgdesc="A modern desktop downloader built with Tauri, React, and yt-dlp"
 arch=('x86_64')

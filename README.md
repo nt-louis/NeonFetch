@@ -2,7 +2,7 @@
 
 A modern desktop downloader built with Tauri, React, and yt-dlp. Download videos from YouTube and 1000+ other platforms with a beautiful, easy-to-use interface.
 
-![Version](https://img.shields.io/badge/version-0.0.3-blue)
+![Version](https://img.shields.io/badge/version-0.0.4-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 > **Prerequisites:** Install `yt-dlp` and `ffmpeg` system-wide (in `PATH`). NeonFetch does not bundle them.
@@ -76,7 +76,7 @@ Install the appropriate package for your distribution:
 
 **Arch Linux:**
 ```bash
-sudo pacman -U neonfetch-0.0.3-1-x86_64.pkg.tar.zst
+sudo pacman -U neonfetch-0.0.4-1-x86_64.pkg.tar.zst
 ```
 
 **Debian/Ubuntu:**
@@ -145,13 +145,13 @@ Sample configs are in `ytdlp-config/` directory.
 **Linux: Installation**
 ```bash
 # Arch Linux
-sudo pacman -U neonfetch-0.0.3-1-x86_64.pkg.tar.zst
+sudo pacman -U neonfetch-0.0.4-1-x86_64.pkg.tar.zst
 
 # Debian/Ubuntu
-sudo dpkg -i neonfetch_0.0.3_amd64.deb
+sudo dpkg -i neonfetch_0.0.4_amd64.deb
 
 # Fedora/RHEL
-sudo rpm -i neonfetch-0.0.3-1.x86_64.rpm
+sudo rpm -i neonfetch-0.0.4-1.x86_64.rpm
 ```
 
 ## License
