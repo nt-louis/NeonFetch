@@ -6,9 +6,9 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Release tag to upload MSI to (e.g. 0.0.4)"
-        required: true
-        default: "0.0.4"
+        description: "Release tag to upload MSI to (e.g. 0.0.4) or latest"
+        required: false
+        default: "latest"
 
 permissions:
   contents: write
@@ -25,7 +25,24 @@ jobs:
           if [ "${{ github.event_name }}" = "release" ]; then
             echo "tag=${{ github.event.release.tag_name }}" >> "$GITHUB_OUTPUT"
           else
-            echo "tag=${{ github.event.inputs.tag }}" >> "$GITHUB_OUTPUT"
+            requested="${{ github.event.inputs.tag }}"
+
+            if [ -z "$requested" ] || [ "$requested" = "latest" ]; then
+              latest_tag="$(curl -fsSL \
+                -H "Authorization: Bearer ${{ github.token }}" \
+                -H "Accept: application/vnd.github+json" \
+                "https://api.github.com/repos/${{ github.repository }}/releases/latest" \
+                | sed -n 's/.*"tag_name": "\([^"]*\)".*/\1/p' | head -n1)"
+
+              if [ -z "$latest_tag" ]; then
+                echo "Failed to resolve latest release tag" >&2
+                exit 1
+              fi
+
+              echo "tag=$latest_tag" >> "$GITHUB_OUTPUT"
+            else
+              echo "tag=$requested" >> "$GITHUB_OUTPUT"
+            fi
           fi
 
       - name: Checkout
