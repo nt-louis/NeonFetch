@@ -6,8 +6,8 @@ pkgdesc="A modern desktop downloader built with Tauri, React, and yt-dlp"
 arch=('x86_64')
 url="https://github.com/zepro2004/yt-dlp-gui"
 license=('MIT')
-depends=('webkit2gtk' 'yt-dlp' 'ffmpeg')
-makedepends=('npm' 'cargo' 'rust' 'libvips' 'imagemagick' 'patchelf')
+depends=('webkit2gtk-4.1' 'gtk3' 'yt-dlp' 'ffmpeg')
+makedepends=('npm' 'cargo' 'rust' 'pkgconf' 'libvips' 'imagemagick' 'patchelf')
 source=()
 md5sums=()
 
